@@ -1,25 +1,58 @@
 from pcconfig import config
 import pynecone as pc
-from dataclasses import dataclass
+import csv
 
-@dataclass
-def Book():
-    id: str
-    name: str
-    author: str
-    kdc: str
+class Book(pc.Model, table=True):
+    bookid:str
+    title:str
+    author:str
+    kdc:str
+    publisher:str
     
 
 
 class State(pc.State):
     search_query: str = ""
     input_state_info: str = ""
+    query_type: str = "title"
+    search_results: list[Book] = []
+    
+    def init_db(filename: str):
+        with open(filename) as f:
+            with pc.session as session:
+                for row in csv.DictReader(f):
+                    book = Book(
+                        bookid=row["bookid"],
+                        title=row["title"],
+                        author=row["author"],
+                        kdc=row["kdc"],
+                        publisher=row["publisher"],
+                    )
+                    session.add(book)
+                session.commit()
+    
+    def search_book(self):
+        with pc.session as session:
+            match self.query_type:
+                case "title":
+                    self.search_results = session.query(Book).filter(Book.title.contains(self.search_query))
+                case "author":
+                    self.search_results = session.query(Book).filter(Book.author.contains(self.search_query))
+                case "kdc":
+                    self.search_results = session.query(Book).filter(Book.kdc == self.search_query)
+                case "publisher":
+                    self.search_results = session.query(Book).filter(Book.publisher.contains(self.search_query))
+                case "bookid":
+                    self.search_results = session.query(Book).filter(Book.bookid == self.search_query)
+                
+        
     
     def find_book(self):
-        if self.search_query == "":
-            self.input_state_info = "input required"
+        if self.search_query != "":
+            self.search_book()
         else:
-            raise NotImplementedError
+            self.input_state_info = "input required"
+            
 
 
 def index():
