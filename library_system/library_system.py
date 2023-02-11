@@ -3,7 +3,7 @@ import pynecone as pc
 import csv
 
 class Book(pc.Model, table=True):
-    bookid:str
+    book_id:str
     title:str
     author:str
     kdc:str
@@ -42,8 +42,8 @@ class State(pc.State):
                     self.search_results = session.query(Book).filter(Book.kdc == self.search_query)
                 case "publisher":
                     self.search_results = session.query(Book).filter(Book.publisher.contains(self.search_query))
-                case "bookid":
-                    self.search_results = session.query(Book).filter(Book.bookid == self.search_query)
+                case "book_id":
+                    self.search_results = session.query(Book).filter(Book.book_id == self.search_query)
                 
         
     
@@ -59,6 +59,7 @@ def index():
     return (
         pc.vstack(
             navbar(),
+            pc.divider(border_color="black"),
             searcharea(),
         )
     )
@@ -97,10 +98,33 @@ def searcharea():
         pc.vstack(
             pc.heading("Search"),
             pc.hstack(
-                pc.input(placeholder="Search", on_change=State.set_search_query),
-                pc.button("Search", on_click=State.find_book),
+                pc.badge(State.query_type, color_scheme="blue"),
+                pc.input(placeholder="Start with search something!", on_change=State.set_search_query),
+                pc.button("Search", on_click=State.find_book, variant="solid", color_scheme="blue", size="md"),
+            width="50%"
             ),
-            pc.text(State.input_state_info),
+            pc.radio_group(
+                pc.hstack(
+                    pc.radio("title", is_checked=True),
+                    pc.radio("author"),
+                    pc.radio("book_id"),
+                    pc.radio("kdc"),
+                    pc.radio("publisher"),
+                ),
+                on_change=State.set_query_type,
+            ),
+            pc.cond(
+                State.input_state_info != "",
+                pc.alert(
+                    pc.alert_icon(),
+                    pc.alert_title(State.input_state_info),
+                    status="error",
+                    variant="left-accent",
+                    width="30%"
+                ),
+                pc.text("")
+            ),
+            width="100%"
         )
     )
 
