@@ -1,9 +1,19 @@
 from pcconfig import config
 import pynecone as pc
+from dataclasses import dataclass
+
+@dataclass
+def Book():
+    id: str
+    name: str
+    author: str
+    kdc: str
+    
+
 
 class State(pc.State):
-    search_query = ""
-    input_state_info = ""
+    search_query: str = ""
+    input_state_info: str = ""
     
     def find_book(self):
         if self.search_query == "":
