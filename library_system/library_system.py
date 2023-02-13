@@ -7,7 +7,8 @@ class Book(pc.Model, table=True):
     title:str
     author:str
     kdc:str
-    publisher:str  
+    publisher:str
+    location:str # ex "A 04 3 45" "서가고유번호 세부서가번호 칸수(상->하) 순서(좌->우)" 
 
 
 class State(pc.State):
@@ -190,7 +191,7 @@ def devtools():
                         pc.cond(
                             State.dev_logined,
                             pc.hstack(
-                                pc.text("logged in")
+                                pc.text("logged in") #TODO: add logout button
                             ),
                             pc.vstack(
                                 pc.text("please input pin"),
