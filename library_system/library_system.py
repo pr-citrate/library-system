@@ -69,9 +69,9 @@ class State(pc.State):
         
     def login_failed_change(self):
         self.login_failed = not self.login_failed
-            
-    def log(self): # temp
-        return pc.console_log(self.dev_logined)
+    
+    def logout(self):
+        self.dev_logined = False
 
 
 def index():
@@ -191,7 +191,11 @@ def devtools():
                         pc.cond(
                             State.dev_logined,
                             pc.hstack(
-                                pc.text("logged in") #TODO: add logout button
+                                pc.text("logged in"),
+                                pc.vstack(
+                                    pc.input(_type="file"),
+                                    pc.button() # todo
+                                ),
                             ),
                             pc.vstack(
                                 pc.text("please input pin"),
@@ -206,7 +210,7 @@ def devtools():
                                             pc.alert_dialog_body("Please input correct PIN!"),
                                             pc.alert_dialog_footer(
                                                 pc.button("Close", on_click=State.login_failed_change,
-                                                )
+                                                ),
                                             ),
                                         )
                                     ),
@@ -216,7 +220,14 @@ def devtools():
                         ),
                     ),
                     pc.drawer_footer(
-                        pc.button("Close", on_click=State.devtools)
+                        pc.hstack(
+                            pc.cond(
+                                State.dev_logined,
+                                pc.button("log out", on_click=State.logout),
+                                pc.spacer(),
+                            ),
+                            pc.button("Close", on_click=State.devtools),
+                        ),
                     ),
                 ),
             ),
