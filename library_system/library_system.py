@@ -8,7 +8,7 @@ class Book(pc.Model, table=True):
     author:str
     kdc:str
     publisher:str
-    location:str # ex "A 04 3 45" "서가고유번호 세부서가번호 칸수(상->하) 순서(좌->우)" 
+    location:str # ex "A 04 6 3 45" "서가고유번호 세부서가번호 전체칸수 칸수(상->하) 순서(좌->우)" 
 
 
 class State(pc.State):
@@ -22,6 +22,7 @@ class State(pc.State):
     default_pin: str = "123456"
     dev_logined: bool = False
     login_failed: bool = False
+    user_file = 0
     
     def init_db(filename: str):
         with open(filename) as f:
@@ -72,7 +73,6 @@ class State(pc.State):
     
     def logout(self):
         self.dev_logined = False
-
 
 def index():
     return (
@@ -190,11 +190,15 @@ def devtools():
                     pc.drawer_body(
                         pc.cond(
                             State.dev_logined,
-                            pc.hstack(
+                            pc.vstack(
                                 pc.text("logged in"),
-                                pc.vstack(
-                                    pc.input(_type="file"),
-                                    pc.button() # todo
+                                pc.hstack(
+                                    pc.input(
+                                        on_change=State.set_user_file,
+                                        type_="file",
+                                        variant="unstyled",
+                                        ),
+                                    pc.button("build"),
                                 ),
                             ),
                             pc.vstack(
