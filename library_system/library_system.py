@@ -104,11 +104,11 @@ def navbar():
                 ),
                 pc.spacer(),
                 pc.button(
-                    pc.icon(tag="EditIcon"),
+                    pc.icon(tag="edit"),
                     on_click=State.devtools,
                 ),
                 pc.button(
-                    pc.icon(tag="MoonIcon"),
+                    pc.icon(tag="moon"),
                     on_click=pc.toggle_color_mode,
                 ),
                 
@@ -129,7 +129,7 @@ def searcharea():
                     pc.badge(State.query_type, color_scheme="blue"),
                     pc.spacer(),
                     pc.input(placeholder="Search something!", on_change=State.set_search_query),
-                    pc.button(pc.icon(tag="SearchIcon"), on_click=State.find_book, variant="solid", color_scheme="blue", size="md"),
+                    pc.button(pc.icon(tag="search"), on_click=State.find_book, variant="solid", color_scheme="blue", size="md"),
                 width="100%",
                 padding="1em",
                 ),
@@ -205,7 +205,7 @@ def devtools():
                                 pc.text("please input pin"),
                                 pc.hstack(
                                     pc.pin_input(length=6, on_change=State.set_pin, mask=True),
-                                    pc.button(pc.icon(tag="UnlockIcon"), on_click=State.dev_login),
+                                    pc.button(pc.icon(tag="unlock"), on_click=State.dev_login),
                                 ),
                                 pc.alert_dialog(
                                     pc.alert_dialog_overlay(
